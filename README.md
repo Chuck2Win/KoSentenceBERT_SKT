@@ -1,4 +1,9 @@
 # Ko-Sentence-BERT-SKTBERT
+----
+옥창원 변경 사항 - 토큰화된 문장이 일정이상 넘어가면 처리를 못해주기에, (기존 sentence transformers에는 있음) 
+그래서 EncoderDataset에 해당 부분 추가(512로 default로 박아줌)
+----
+
 
 - 다음 레파지토리의 ETRI KoBERT의 학습된 파일을 공개하지 못함 <br>
     - https://github.com/BM-K/KoSentenceBERT
