@@ -3,9 +3,6 @@ from transformers import AutoModel, AutoTokenizer, AutoConfig, BertModel, BertCo
 import json
 from typing import List, Dict, Optional
 import os
-import gluonnlp as nlp
-#from kobert.utils import get_tokenizer
-#from kobert.pytorch_kobert import get_pytorch_kobert_model
 import torch
 
 class Transformer(nn.Module):
