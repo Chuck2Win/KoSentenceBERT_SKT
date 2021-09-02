@@ -16,7 +16,7 @@ class Transformer(nn.Module):
     :param tokenizer_args: Arguments (key, value pairs) passed to the Huggingface Tokenizer model
     :param tokenizer_args: Dict with parameters which are passed to the tokenizer.
     """
-    def __init__(self, model_name_or_path: str, max_seq_length: int = 128,
+    def __init__(self, model_name_or_path: str, tokenizer_name_or_path : str = '', max_seq_length: int = 128,
                  model_args: Dict = {}, cache_dir: Optional[str] = None,
                  tokenizer_args: Dict = {}):#, isKor=False, isLoad=False):
         super(Transformer, self).__init__()
@@ -25,10 +25,14 @@ class Transformer(nn.Module):
         
         # for Korea BERT
         config = AutoConfig.from_pretrained(model_name_or_path, **model_args, cache_dir=cache_dir)
-        self.auto_model = AutoModel.from_pretrained(model_name_or_path, config=config, cache_dir=cache_dir)
-        self.tokenizer = AutoTokenizer.from_pretrained(model_name_or_path,
-                                                       cache_dir=cache_dir,
-                                                       **tokenizer_args)
+        self.auto_model = AutoModel.from_pretrained(model_name_or_path)#, config=config, cache_dir=cache_dir)
+        # if tokenizer_name_or_path=='./TOKENIZER':
+        #     from .tokenizer import KoBertTokenizer
+        #     self.tokenizer = KoBertTokenizer.from_pretrained(tokenizer_name_or_path)
+        # else:
+        #     self.tokenizer = AutoTokenizer.from_pretrained(model_name_or_path,
+        #                                                cache_dir=cache_dir,
+        #                                                **tokenizer_args)
 
 
     def forward(self, features):
