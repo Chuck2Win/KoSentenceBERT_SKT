@@ -4,8 +4,8 @@ import json
 from typing import List, Dict, Optional
 import os
 import gluonnlp as nlp
-from kobert.utils import get_tokenizer
-from kobert.pytorch_kobert import get_pytorch_kobert_model
+#from kobert.utils import get_tokenizer
+#from kobert.pytorch_kobert import get_pytorch_kobert_model
 import torch
 
 class Transformer(nn.Module):
@@ -21,28 +21,15 @@ class Transformer(nn.Module):
     """
     def __init__(self, model_name_or_path: str, max_seq_length: int = 128,
                  model_args: Dict = {}, cache_dir: Optional[str] = None,
-                 tokenizer_args: Dict = {}, isKor=False, isLoad=False):
+                 tokenizer_args: Dict = {}):#, isKor=False, isLoad=False):
         super(Transformer, self).__init__()
         self.config_keys = ['max_seq_length']
         self.max_seq_length = max_seq_length
         
         # for Korea BERT
-        if isKor:
-            bert_model, vocab = get_pytorch_kobert_model()
-            tokenizer = get_tokenizer()
-            bert_tokenizer = nlp.data.BERTSPTokenizer(tokenizer, vocab, lower=False)
-                                    
-            self.auto_model = bert_model
-            self.tokenizer = bert_tokenizer
-            self.vocab = vocab
-
-            if isLoad:
-                print("Load Model")
-                self.auto_model.load_state_dict(torch.load(model_name_or_path+'/result.pt'))
-        else:
-            config = AutoConfig.from_pretrained(model_name_or_path, **model_args, cache_dir=cache_dir)
-            self.auto_model = AutoModel.from_pretrained(model_name_or_path, config=config, cache_dir=cache_dir)
-            self.tokenizer = AutoTokenizer.from_pretrained(model_name_or_path,
+        config = AutoConfig.from_pretrained(model_name_or_path, **model_args, cache_dir=cache_dir)
+        self.auto_model = AutoModel.from_pretrained(model_name_or_path, config=config, cache_dir=cache_dir)
+        self.tokenizer = AutoTokenizer.from_pretrained(model_name_or_path,
                                                        cache_dir=cache_dir,
                                                        **tokenizer_args)
 
