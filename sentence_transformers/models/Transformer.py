@@ -4,6 +4,7 @@ import json
 from typing import List, Dict, Optional
 import os
 import torch
+from .tokenizer.KoBertTokenizer import KoBertTokenizer
 
 class Transformer(nn.Module):
     """Huggingface AutoModel to generate token embeddings.
@@ -16,23 +17,23 @@ class Transformer(nn.Module):
     :param tokenizer_args: Arguments (key, value pairs) passed to the Huggingface Tokenizer model
     :param tokenizer_args: Dict with parameters which are passed to the tokenizer.
     """
-    def __init__(self, model_name_or_path: str, tokenizer_name_or_path : str = '', max_seq_length: int = 128,
+    def __init__(self, model_name_or_path: str, tokenizer_name_or_path : str = 'x', max_seq_length: int = 128,
                  model_args: Dict = {}, cache_dir: Optional[str] = None,
                  tokenizer_args: Dict = {}):#, isKor=False, isLoad=False):
         super(Transformer, self).__init__()
         self.config_keys = ['max_seq_length']
         self.max_seq_length = max_seq_length
-        
-        # for Korea BERT
+        print(KoBertTokenizer)
+        #for Korea BERT
         config = AutoConfig.from_pretrained(model_name_or_path, **model_args, cache_dir=cache_dir)
+        #print(config)
         self.auto_model = AutoModel.from_pretrained(model_name_or_path)#, config=config, cache_dir=cache_dir)
-        # if tokenizer_name_or_path=='./TOKENIZER':
-        #     from .tokenizer import KoBertTokenizer
-        #     self.tokenizer = KoBertTokenizer.from_pretrained(tokenizer_name_or_path)
-        # else:
-        #     self.tokenizer = AutoTokenizer.from_pretrained(model_name_or_path,
-        #                                                cache_dir=cache_dir,
-        #                                                **tokenizer_args)
+        if tokenizer_name_or_path=='./TOKENIZER':
+            self.tokenizer = KoBertTokenizer.from_pretrained(tokenizer_name_or_path)
+        else:
+            self.tokenizer = AutoTokenizer.from_pretrained(model_name_or_path,
+                                                       cache_dir=cache_dir,
+                                                       **tokenizer_args)
 
 
     def forward(self, features):
@@ -118,8 +119,8 @@ class Transformer(nn.Module):
 
     @staticmethod
     def load(input_path: str):
-        #with open(os.path.join(input_path, 'sentence_bert_config.json')) as fIn:
-        #    config = json.load(fIn)
+        with open(os.path.join(input_path, 'sentence_bert_config.json')) as fIn:
+            config = json.load(fIn)
         
         return Transformer(model_name_or_path=input_path, isKor=True, isLoad=True)
 
