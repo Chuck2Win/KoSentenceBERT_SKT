@@ -17,17 +17,19 @@ class Transformer(nn.Module):
     :param tokenizer_args: Arguments (key, value pairs) passed to the Huggingface Tokenizer model
     :param tokenizer_args: Dict with parameters which are passed to the tokenizer.
     """
-    def __init__(self, model_name_or_path: str, tokenizer_name_or_path : str = 'x', max_seq_length: int = 128,
+    def __init__(self, model_name_or_path: str, tokenizer_name_or_path : str, max_seq_length: int = 128,
                  model_args: Dict = {}, cache_dir: Optional[str] = None,
                  tokenizer_args: Dict = {}):#, isKor=False, isLoad=False):
         super(Transformer, self).__init__()
         self.config_keys = ['max_seq_length']
         self.max_seq_length = max_seq_length
         print(KoBertTokenizer)
-        #for Korea BERT
+        
         config = AutoConfig.from_pretrained(model_name_or_path, **model_args, cache_dir=cache_dir)
-        #print(config)
+        
+        # contextual representation model 
         self.auto_model = AutoModel.from_pretrained(model_name_or_path)#, config=config, cache_dir=cache_dir)
+        # tokenizer
         if tokenizer_name_or_path=='./TOKENIZER':
             self.tokenizer = KoBertTokenizer.from_pretrained(tokenizer_name_or_path)
         else:
@@ -88,10 +90,10 @@ class Transformer(nn.Module):
         """
         pad_seq_length = min(pad_seq_length, self.max_seq_length) + 3 #Add space for special tokens
         
-        cls_token = self.vocab.cls_token
-        sep_token = self.vocab.sep_token
-        sep_token_idx = self.vocab.token_to_idx[sep_token]
-        cls_token_idx = self.vocab.token_to_idx[cls_token]
+        cls_token = self.tokenizer.cls_token
+        sep_token = self.tokenizer.sep_token
+        sep_token_idx = self.tokenizer.convert_tokens_to_ids(sep_token)
+        cls_token_idx = self.tokenizer.convert_tokens_to_ids(cls_token)
         
         #input_sentence = [cls_token_idx] + tokens + [sep_token_idx]
         tokens = torch.cat([torch.tensor([cls_token_idx]), torch.tensor(tokens)], dim=-1)
