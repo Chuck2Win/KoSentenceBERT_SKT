@@ -63,8 +63,7 @@ class Transformer(nn.Module):
         """
         Tokenizes a text and maps tokens to token-ids
         """
-        tokens = self.tokenizer(text)
-        tokens = [self.vocab.token_to_idx[token] for token in tokens]
+        tokens = self.tokenizer.convert_tokens_to_ids(text)
         return tokens
 
     def get_segment_ids_vaild_len(self, inputs):
