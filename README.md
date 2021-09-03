@@ -1,8 +1,8 @@
 # Ko-Sentence-BERT-SKTBERT-huggingface
 ----
-옥창원 변경 사항 - 토큰화된 문장이 일정이상 넘어가면 처리를 못해주기에, (기존 sentence transformers에는 있음) 
-그래서 EncoderDataset에 해당 부분 추가(512로 default로 박아줌)
-hugging face의 그것으로 교체
+옥창원 변경 사항 - 토큰화된 문장이 일정이상 넘어가면 처리를 못해주기에, (기존 sentence transformers에는 있음)   
+그래서 EncoderDataset에 해당 부분 추가(512로 default로 박아줌)  
+hugging face의 그것으로 교체  
 ----
 
 
