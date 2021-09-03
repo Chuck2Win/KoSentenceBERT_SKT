@@ -39,5 +39,5 @@ with open('./KorNLUDatasets/KorSTS/tune_test.tsv', 'rt', encoding='utf-8') as fI
 # model 저장됬던 위치.
 model_save_path = model_save_path = os.path.split(os.path.split(pretrained_model_weight)[0])[0]
 test_evaluator = EmbeddingSimilarityEvaluator.from_input_examples(test_samples, name='sts-test')
-test_evaluator(model, output_path=model_save_path)ㅇㅇ
+test_evaluator(model, output_path=model_save_path)
 
