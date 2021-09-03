@@ -43,6 +43,7 @@ for i in tqdm(gom):
 
         
 # sentence embedding
+# 2분소요
 corpus_embeddings = embedder.encode(Gom, convert_to_tensor=True, show_progress_bar=True, is_pretokenized = False, num_workers=64, batch_size = 512)
 
 # cosine similarity 계산
@@ -51,7 +52,7 @@ Cos_scores = []
 for query,name in tqdm(zip(corpus_embeddings,gom)):
     cos_scores = util.pytorch_cos_sim(query, corpus_embeddings)[0]
     Cos_scores.append(cos_scores.cpu().tolist())
-print(time.time()-now) # 2분 소요
+print(time.time()-now) # 20분 소요
 
 
 pickle.dump(Cos_scores,open('preprocessed_data_cosine_sim','wb'))
