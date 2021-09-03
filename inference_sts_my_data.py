@@ -54,6 +54,40 @@ for query,name in tqdm(zip(corpus_embeddings,gom)):
     Cos_scores.append(cos_scores.cpu().tolist())
 print(time.time()-now) # 20분 소요
 
+# 해당 방식 말고
+def pytorch_cos_sim(a, b, device):
+    """
+    Computes the cosine similarity cos_sim(a[i], b[j]) for all i and j.
+    This function can be used as a faster replacement for 1-scipy.spatial.distance.cdist(a,b)
+    :return: Matrix with res[i][j]  = cos_sim(a[i], b[j])
+    """
+    if not isinstance(a, torch.Tensor):
+        a = torch.tensor(a)
+
+    if not isinstance(b, torch.Tensor):
+        b = torch.tensor(b)
+
+    if len(a.shape) == 1:
+        a = a.unsqueeze(0)
+
+    if len(b.shape) == 1:
+        b = b.unsqueeze(0)
+
+    a_norm = a / a.norm(dim=1)[:, None]
+    b_norm = b / b.norm(dim=1)[:, None]
+    a_norm.to(device)
+    b_norm.to(device)
+    return torch.mm(a_norm, b_norm.transpose(0, 1))
+
+# batch 로 계산
+now = time.time()
+Cos_scores = []
+batch_size = 32
+for batch_idx in tqdm(range(len(corpus_embeddings)//batch_size)):
+    cos_scores = pytorch_cos_sim(corpus_embeddings[batch_size*batch_idx:batch_size*(batch_idx+1)], corpus_embeddings, device)
+    Cos_scores.extend(cos_scores.tolist())
+print(time.time()-now)
+ 
 
 pickle.dump(Cos_scores,open('preprocessed_data_cosine_sim','wb'))
 
