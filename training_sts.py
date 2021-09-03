@@ -15,20 +15,25 @@ logging.basicConfig(format='%(asctime)s - %(message)s',
                     level=logging.INFO,
                     handlers=[LoggingHandler()])
 
-model_name = "skt_kobert_model_"
+# pretrained model + tokenizer
+model_path = "./kobert"
+tokenizer_path = './TOKENIZER'
 
-train_batch_size = 16
-num_epochs = 4
-model_save_path = 'output/training_stsbenchmark_'+model_name.replace("/", "-")+'-'+datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-
-word_embedding_model = models.Transformer(model_name, isKor=True)
-
+word_embedding_model = models.Transformer(model_path, tokenizer_path)
 # Apply mean pooling to get one fixed sized sentence vector
 pooling_model = models.Pooling(word_embedding_model.get_word_embedding_dimension(),
                                pooling_mode_mean_tokens=True,
                                pooling_mode_cls_token=False,
                                pooling_mode_max_tokens=False)
 
+
+train_batch_size = 16
+num_epochs = 4
+# path 잘 맞춰라.
+
+model_save_path = 'output/training_stsbenchmark_'+model_name.replace("/", "-")+'-'+datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+
+# sentence transformer model
 model = SentenceTransformer(modules=[word_embedding_model, pooling_model])
 
 logging.info("Read STSbenchmark train dataset")
@@ -76,6 +81,7 @@ logging.info("Warmup-steps: {}".format(warmup_steps))
 
 
 # Train the model
+# call back이 없음. -> iteration마다 저장해도 될 듯. -> 그래서 평가
 model.fit(train_objectives=[(train_dataloader, train_loss)],
           evaluator=evaluator,
           epochs=num_epochs,
@@ -88,7 +94,3 @@ model.fit(train_objectives=[(train_dataloader, train_loss)],
 # Load the stored model and evaluate its performance on STS benchmark dataset
 #
 ##############################################################################
-
-model = SentenceTransformer(model_save_path)
-test_evaluator = EmbeddingSimilarityEvaluator.from_input_examples(test_samples, name='sts-test')
-test_evaluator(model, output_path=model_save_path)
